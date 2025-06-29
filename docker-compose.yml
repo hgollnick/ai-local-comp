@@ -23,6 +23,8 @@ services:
       - backend
     ports:
       - "5173:5173"
+    environment:
+      - VITE_API_TARGET=http://backend:8000
 
   ollama:
     image: ollama/ollama:latest
