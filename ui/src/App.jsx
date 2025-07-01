@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import ModelSelector from './components/ModelSelector';
-import OllamaUrlInput from './components/OllamaUrlInput';
 import SaveButton from './components/SaveButton';
 import MessageAlert from './components/MessageAlert';
 
@@ -18,14 +17,14 @@ function App() {
         return res.json();
       })
       .then(setConfig)
-      .catch(err => setMessage('Error loading config.'));
+      .catch(err => setMessage('Error loading config'));
     fetch('/models')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load models');
         return res.json();
       })
       .then(data => setModels(data.models || []))
-      .catch(err => setMessage('Error loading models.'));
+      .catch(err => setMessage('Error loading models'));
   }, []);
 
   const handleChange = e => {
@@ -62,7 +61,6 @@ function App() {
       </Typography>
       <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
         <ModelSelector config={config} models={models} handleChange={handleChange} />
-        <OllamaUrlInput value={config.ollama_url} handleChange={handleChange} />
         <SaveButton saving={saving} />
       </Box>
       <MessageAlert message={message} />
