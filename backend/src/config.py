@@ -11,7 +11,7 @@ default_config = {
     "code_model": "codellama",
     "simple_model": "mistral",
     "complex_model": "llama3",
-    "ollama_url": "http://localhost:11434"
+    "ollama_url": os.environ.get("OLLAMA_URL", "http://localhost:11434")
 }
 
 class Config(BaseModel):

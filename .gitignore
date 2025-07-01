@@ -60,3 +60,4 @@ venv/
 
 # Misc
 *.log
+backend/agent_config.json

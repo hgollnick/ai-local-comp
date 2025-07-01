@@ -31,13 +31,17 @@ def ask_question(payload: dict = Body(...)):
 
 def get_agent_answer_and_model(question: str):
     agent_type = router_agent.decide_agent(question)
+    print(f"[main.py] Routing agent type: {agent_type}")
     if agent_type == "code":
+        print(f"[main.py] Using code_agent with model: {router_agent.code_model}")
         answer = router_agent.code_agent.generate(question)
         model = router_agent.code_model
     elif agent_type == "simple":
+        print(f"[main.py] Using fast_agent with model: {router_agent.simple_model}")
         answer = router_agent.fast_agent.generate(question)
         model = router_agent.simple_model
     else:
+        print(f"[main.py] Using general_agent with model: {router_agent.complex_model}")
         answer = router_agent.general_agent.generate(question)
         model = router_agent.complex_model
     return answer, model
