@@ -3,6 +3,7 @@ import { Container, Typography, Box, CircularProgress } from '@mui/material';
 import ModelSelector from './components/ModelSelector';
 import SaveButton from './components/SaveButton';
 import MessageAlert from './components/MessageAlert';
+import PullModel from './components/PullModel';
 
 function App() {
   const [config, setConfig] = useState(null);
@@ -48,6 +49,12 @@ function App() {
     setSaving(false);
   };
 
+  const refreshModels = () => {
+    fetch('/models')
+      .then(res => res.json())
+      .then(data => setModels(data.models || []));
+  };
+
   if (!config) return (
     <Box display="flex" justifyContent="center" mt={8}>
       <CircularProgress />
@@ -59,6 +66,7 @@ function App() {
       <Typography variant="h5" gutterBottom>
         AI Local Config
       </Typography>
+      <PullModel models={models} onPulled={refreshModels} />
       <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
         <ModelSelector config={config} models={models} handleChange={handleChange} />
         <SaveButton saving={saving} />

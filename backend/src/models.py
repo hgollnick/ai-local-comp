@@ -16,3 +16,9 @@ def list_models() -> List[str]:
     except Exception as e:
         logger.error(f"Error fetching models: {e}")
         return []
+
+def pull_model(model_name: str) -> requests.Response:
+    """Call Ollama's /api/pull endpoint to pull a model."""
+    ollama_url = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+    response = requests.post(f"{ollama_url}/api/pull", json={"name": model_name}, stream=True)
+    return response

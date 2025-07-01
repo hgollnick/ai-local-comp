@@ -1,6 +1,7 @@
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Request
+from fastapi.responses import StreamingResponse
 from src.config import Config, load_config, save_config
-from src.models import list_models
+from src.models import list_models, pull_model
 from src.agents.router_agent import RouterAgent
 
 app = FastAPI()
@@ -28,6 +29,15 @@ def ask_question(payload: dict = Body(...)):
     answer, model = get_agent_answer_and_model(question)
     return {"answer": answer, "model": model}
 
+@app.post("/pull_model/{model_name}")
+def pull_model_endpoint(model_name: str):
+    """Endpoint to pull a model from Ollama, streaming progress."""
+    response = pull_model(model_name)
+    def event_stream():
+        for chunk in response.iter_content(chunk_size=1024):
+            if chunk:
+                yield chunk
+    return StreamingResponse(event_stream(), media_type="application/octet-stream")
 
 def get_agent_answer_and_model(question: str):
     agent_type = router_agent.decide_agent(question)
