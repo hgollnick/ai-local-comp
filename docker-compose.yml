@@ -4,8 +4,8 @@ services:
   backend:
     build:
       context: ./backend
-    env_file:
-      - .env
+    environment:
+      - OLLAMA_URL=http://ollama:11434
     volumes:
       - ./backend:/app/backend
     working_dir: /app/backend
@@ -23,8 +23,8 @@ services:
       - backend
     ports:
       - "5173:5173"
-    env_file:
-      - .env
+    environment:
+      - VITE_API_TARGET=http://backend:8000
 
   ollama:
     image: ollama/ollama:latest
