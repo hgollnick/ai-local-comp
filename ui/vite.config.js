@@ -12,12 +12,18 @@ export default defineConfig(({ mode }) => {
         '/config': {
           target: apiTarget,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/config/, '/config'),
         },
         '/models': {
           target: apiTarget,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/models/, '/models'),
+        },
+        '/ask': {
+          target: apiTarget,
+          changeOrigin: true,
+        },
+        '/pull_model': {
+          target: apiTarget,
+          changeOrigin: true,
         },
       },
     },

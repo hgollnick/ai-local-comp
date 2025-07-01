@@ -1,14 +1,18 @@
 from functools import lru_cache
+import logging
 from src.config import load_config
 from src.agents.ollama_agent import OllamaAgent
 from src.agents.code_agent import CodeAgent
 from src.agents.fast_agent import FastAgent
 from src.agents.general_agent import GeneralAgent
 
+logger = logging.getLogger(__name__)
+
 
 class RouterAgent:
     def __init__(self):
         cfg = load_config()
+        logger.info(f"RouterAgent config: {cfg}")
         self.router_model = cfg["router_model"]
         self.code_model = cfg["code_model"]
         self.simple_model = cfg["simple_model"]
@@ -22,8 +26,10 @@ class RouterAgent:
 
     @lru_cache(maxsize=100)
     def decide_agent(self, user_prompt: str) -> str:
+        logger.info(f"RouterAgent deciding agent for prompt: {user_prompt}")
         routing_prompt = self._build_routing_prompt(user_prompt)
         answer = self.router.generate(routing_prompt).lower()
+        logger.info(f"RouterAgent decision: {answer}")
         return self._parse_routing_answer(answer)
 
     def _build_routing_prompt(self, user_prompt: str) -> str:

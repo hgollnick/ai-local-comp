@@ -1,19 +1,31 @@
 import React, { useState } from 'react';
-import { Box, Button, LinearProgress, TextField, Typography } from '@mui/material';
+import { Box, Button, LinearProgress, TextField, Typography, Alert } from '@mui/material';
 
 function PullModel({ models, onPulled }) {
   const [modelName, setModelName] = useState('');
   const [progress, setProgress] = useState(0);
   const [pulling, setPulling] = useState(false);
   const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
   const handlePull = async () => {
     if (!modelName) return;
     setPulling(true);
     setProgress(0);
     setMessage('');
+    setError('');
     try {
       const res = await fetch(`/pull_model/${encodeURIComponent(modelName)}`, { method: 'POST' });
+      if (!res.ok) {
+        let errorText = await res.text();
+        try {
+          const json = JSON.parse(errorText);
+          errorText = json.detail || errorText;
+        } catch {}
+        setError(errorText);
+        setPulling(false);
+        return;
+      }
       if (!res.body) throw new Error('No response body');
       const reader = res.body.getReader();
       let received = 0;
@@ -28,7 +40,7 @@ function PullModel({ models, onPulled }) {
       setMessage('Model pulled successfully!');
       if (onPulled) onPulled();
     } catch (err) {
-      setMessage('Error pulling model.');
+      setError('Error pulling model.');
     }
     setPulling(false);
   };
@@ -49,7 +61,8 @@ function PullModel({ models, onPulled }) {
       </Button>
       {pulling && <LinearProgress variant="indeterminate" sx={{ mt: 2 }} />}
       {progress === 100 && <Typography color="success.main">Done!</Typography>}
-      {message && <Typography color={message.startsWith('Error') ? 'error' : 'success.main'}>{message}</Typography>}
+      {message && <Typography color="success.main">{message}</Typography>}
+      {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
     </Box>
   );
 }
