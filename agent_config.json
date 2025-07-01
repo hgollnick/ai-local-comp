@@ -1,7 +1,0 @@
-{
-  "router_model": "phi:latest",
-  "code_model": "codellama:instruct",
-  "simple_model": "mistral:instruct",
-  "complex_model": "llama3:latest",
-  "ollama_url": "http://localhost:11434"
-}

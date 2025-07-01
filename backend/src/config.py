@@ -1,7 +1,10 @@
 import json
+import shutil
+import os
 from pydantic import BaseModel
 
 CONFIG_PATH = "agent_config.json"
+BACKUP_PATH = "agent_config.json.bak"
 
 default_config = {
     "router_model": "phi",
@@ -23,6 +26,9 @@ def load_config():
         with open(CONFIG_PATH, "r") as f:
             return json.load(f)
     except FileNotFoundError:
+        print(f"Warning: {CONFIG_PATH} not found. Creating a new config and backing up any existing file as {BACKUP_PATH}.")
+        if os.path.exists(CONFIG_PATH):
+            shutil.copy2(CONFIG_PATH, BACKUP_PATH)
         save_config(default_config)
         return default_config
 

@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Body
-from config import Config, load_config, save_config
-from models import list_models
-from agents.router_agent import RouterAgent
+from src.config import Config, load_config, save_config
+from src.models import list_models
+from src.agents.router_agent import RouterAgent
 
 app = FastAPI()
 

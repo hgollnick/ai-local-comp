@@ -1,9 +1,9 @@
 from functools import lru_cache
-from backend.config import load_config
-from backend.agents.ollama_agent import OllamaAgent
-from backend.agents.code_agent import CodeAgent
-from backend.agents.fast_agent import FastAgent
-from backend.agents.general_agent import GeneralAgent
+from src.config import load_config
+from src.agents.ollama_agent import OllamaAgent
+from src.agents.code_agent import CodeAgent
+from src.agents.fast_agent import FastAgent
+from src.agents.general_agent import GeneralAgent
 
 
 class RouterAgent:

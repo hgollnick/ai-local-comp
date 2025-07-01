@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, Box, CircularProgress } from '@mui/material';
-import ModelSelector from './ModelSelector';
-import OllamaUrlInput from './OllamaUrlInput';
-import SaveButton from './SaveButton';
-import MessageAlert from './MessageAlert';
+import ModelSelector from './components/ModelSelector';
+import OllamaUrlInput from './components/OllamaUrlInput';
+import SaveButton from './components/SaveButton';
+import MessageAlert from './components/MessageAlert';
 
 function App() {
   const [config, setConfig] = useState(null);
@@ -12,8 +12,20 @@ function App() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('/config').then(res => res.json()).then(setConfig);
-    fetch('/models').then(res => res.json()).then(data => setModels(data.models || []));
+    fetch('/config')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load config');
+        return res.json();
+      })
+      .then(setConfig)
+      .catch(err => setMessage('Error loading config.'));
+    fetch('/models')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to load models');
+        return res.json();
+      })
+      .then(data => setModels(data.models || []))
+      .catch(err => setMessage('Error loading models.'));
   }, []);
 
   const handleChange = e => {
@@ -24,12 +36,16 @@ function App() {
     e.preventDefault();
     setSaving(true);
     setMessage('');
-    const res = await fetch('/config', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(config),
-    });
-    setMessage(res.ok ? 'Config saved!' : 'Error saving config.');
+    try {
+      const res = await fetch('/config', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config),
+      });
+      setMessage(res.ok ? 'Config saved!' : 'Error saving config.');
+    } catch (err) {
+      setMessage('Error saving config.');
+    }
     setSaving(false);
   };
 
