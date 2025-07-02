@@ -29,7 +29,11 @@ function App() {
   }, []);
 
   const handleChange = e => {
-    setConfig({ ...config, [e.target.name]: e.target.value });
+    const { name, type, checked, value } = e.target;
+    setConfig({
+      ...config,
+      [name]: type === 'checkbox' ? checked : value,
+    });
   };
 
   const handleSubmit = async e => {

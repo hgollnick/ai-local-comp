@@ -4,6 +4,7 @@ from fastapi.responses import StreamingResponse
 from src.config import Config, load_config, save_config
 from src.models import list_models, pull_model
 from src.agents.router_agent import RouterAgent
+from pydantic import BaseModel
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -11,6 +12,9 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 router_agent = RouterAgent()
+
+class AskRequest(BaseModel):
+    prompt: str
 
 @app.get("/models")
 def get_models():
@@ -34,15 +38,16 @@ def set_config(cfg: Config):
     return {"status": "ok"}
 
 @app.post("/ask")
-def ask_question(payload: dict = Body(...)):
-    logger.info(f"POST /ask called with payload: {payload}")
-    question = payload.get("question", "")
-    if not question:
-        logger.warning("No question provided in /ask payload.")
-        return {"error": "No question provided."}
-    answer, model = get_agent_answer_and_model(question)
-    logger.info(f"Answer: {answer}, Model: {model}")
-    return {"answer": answer, "model": model}
+async def ask(request: AskRequest):
+    logger.info(f"POST /ask called with payload: {request}")
+    question = request.prompt
+    cfg = load_config()
+    use_langchain = cfg.get("use_langchain_router", False)
+    router = "langchain" if use_langchain else "intern"
+    logger.info(f"Router used: {router}")
+    result = router_agent.run(question)
+    logger.info(f"Result: {result}")
+    return {"result": result, "router": router}
 
 @app.post("/pull_model/{model_name}")
 def pull_model_endpoint(model_name: str):
@@ -57,22 +62,3 @@ def pull_model_endpoint(model_name: str):
                 logger.debug(f"Streaming chunk of size {len(chunk)} for model {model_name}")
                 yield chunk
     return StreamingResponse(event_stream(), media_type="application/octet-stream")
-
-def get_agent_answer_and_model(question: str):
-    logger.info(f"Routing question: {question}")
-    agent_type = router_agent.decide_agent(question)
-    logger.info(f"Routing agent type: {agent_type}")
-    if agent_type == "code":
-        logger.info(f"Using code_agent with model: {router_agent.code_model}")
-        answer = router_agent.code_agent.generate(question)
-        model = router_agent.code_model
-    elif agent_type == "simple":
-        logger.info(f"Using fast_agent with model: {router_agent.simple_model}")
-        answer = router_agent.fast_agent.generate(question)
-        model = router_agent.simple_model
-    else:
-        logger.info(f"Using general_agent with model: {router_agent.complex_model}")
-        answer = router_agent.general_agent.generate(question)
-        model = router_agent.complex_model
-    logger.info(f"Final answer: {answer}, model: {model}")
-    return answer, model

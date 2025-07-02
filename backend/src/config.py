@@ -14,7 +14,8 @@ default_config = {
     "code_model": "codellama",
     "simple_model": "mistral",
     "complex_model": "llama3",
-    "ollama_url": os.environ.get("OLLAMA_URL", "http://localhost:11434")
+    "ollama_url": os.environ.get("OLLAMA_URL", "http://localhost:11434"),
+    "use_langchain_router": False
 }
 
 class Config(BaseModel):
@@ -23,6 +24,7 @@ class Config(BaseModel):
     simple_model: str
     complex_model: str
     ollama_url: str
+    use_langchain_router: bool = False
 
 def load_config():
     try:

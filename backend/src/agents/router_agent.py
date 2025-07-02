@@ -1,39 +1,30 @@
-from functools import lru_cache
-import logging
 from src.config import load_config
+from src.agents.langchain_router_agent import LangchainRouterAgent
 from src.agents.ollama_agent import OllamaAgent
 from src.agents.code_agent import CodeAgent
 from src.agents.fast_agent import FastAgent
 from src.agents.general_agent import GeneralAgent
+import logging
 
 logger = logging.getLogger(__name__)
-
 
 class RouterAgent:
     def __init__(self):
         cfg = load_config()
-        logger.info(f"RouterAgent config: {cfg}")
+        self.use_langchain_router = cfg.get("use_langchain_router", False)
+        self.langchain_router = LangchainRouterAgent()
         self.router_model = cfg["router_model"]
         self.code_model = cfg["code_model"]
         self.simple_model = cfg["simple_model"]
         self.complex_model = cfg["complex_model"]
         self.ollama_url = cfg["ollama_url"]
-
         self.router = OllamaAgent(self.router_model, self.ollama_url)
         self.code_agent = CodeAgent(self.code_model, self.ollama_url)
         self.fast_agent = FastAgent(self.simple_model, self.ollama_url)
         self.general_agent = GeneralAgent(self.complex_model, self.ollama_url)
 
-    @lru_cache(maxsize=100)
     def decide_agent(self, user_prompt: str) -> str:
-        logger.info(f"RouterAgent deciding agent for prompt: {user_prompt}")
-        routing_prompt = self._build_routing_prompt(user_prompt)
-        answer = self.router.generate(routing_prompt).lower()
-        logger.info(f"RouterAgent decision: {answer}")
-        return self._parse_routing_answer(answer)
-
-    def _build_routing_prompt(self, user_prompt: str) -> str:
-        return (
+        routing_prompt = (
             'Choose which agent should respond to the following query.\n\n'
             f'Query:\n"""{user_prompt}"""\n\n'
             'Respond with exactly one word:\n'
@@ -42,8 +33,8 @@ class RouterAgent:
             '- "complex" → if it\'s nuanced, abstract, or multi-part.\n\n'
             'Your answer:'
         )
-
-    def _parse_routing_answer(self, answer: str) -> str:
+        answer = self.router.generate(routing_prompt).lower()
+        logger.info(f"[INTERN ROUTER] Routing decision: '{answer}' for prompt: {user_prompt}")
         if "code" in answer:
             return "code"
         elif "simple" in answer:
@@ -52,10 +43,17 @@ class RouterAgent:
             return "complex"
 
     def run(self, prompt: str) -> str:
-        agent_type = self.decide_agent(prompt)
-        if agent_type == "code":
-            return self.code_agent.generate(prompt)
-        elif agent_type == "simple":
-            return self.fast_agent.generate(prompt)
+        cfg = load_config()
+        use_langchain = cfg.get("use_langchain_router", False)
+        if use_langchain:
+            logger.info(f"[LANGCHAIN ROUTER] Routing with LangChain for prompt: {prompt}")
+            return self.langchain_router.run(prompt)
         else:
-            return self.general_agent.generate(prompt)
+            agent_type = self.decide_agent(prompt)
+            logger.info(f"[INTERN ROUTER] Using agent: {agent_type} for prompt: {prompt}")
+            if agent_type == "code":
+                return self.code_agent.generate(prompt)
+            elif agent_type == "simple":
+                return self.fast_agent.generate(prompt)
+            else:
+                return self.general_agent.generate(prompt)

@@ -12,7 +12,7 @@ def list_models() -> List[str]:
         response = requests.get(f"{ollama_url}/api/tags")
         response.raise_for_status()
         data = response.json()
-        logger.info(f"Models fetched: {data.get('models', [])}")
+        logger.debug(f"Models fetched: {data.get('models', [])}")
         # The models are under the "models" key, each with a "name"
         return [model["name"] for model in data.get("models", [])]
     except Exception as e:

@@ -58,5 +58,15 @@ cd backend
 python -m unittest discover -s tests
 ```
 
+## Example: Ask Endpoint
+
+You can send a prompt to the backend using curl:
+
+```bash
+curl -X POST http://localhost:8000/ask \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "What is the capital of France?"}'
+```
+
 ## License
 See `LICENSE.txt`.
