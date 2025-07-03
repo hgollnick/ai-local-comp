@@ -3,6 +3,9 @@ from langchain_community.llms import Ollama
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from src.config import load_config
+# Add imports for classification chain
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import PromptTemplate as CorePromptTemplate
 
 
 class LangchainRouterAgent:
@@ -40,32 +43,52 @@ class LangchainRouterAgent:
                 template="You are a coding assistant. Provide code or technical help for: {input}"
             )
         )
+        # Add classification chain using Ollama
+        self.classification_chain = (
+            CorePromptTemplate.from_template(
+                """Given the user question below, classify it as either `simple`, `complex`, or `code`.
+
+Do not respond with more than one word.
+
+<question>
+{question}
+</question>
+
+Classification:"""
+            )
+            | Ollama(model=self.complex_model, base_url=self.ollama_url)
+            | StrOutputParser()
+        )
 
     def route(self, prompt: str) -> str:
-        # Simple routing logic: can be replaced with more advanced classification
-        code_keywords = ["code", "python", "function", "class", "bug", "error", "script", "algorithm", "implement", "write a program", "write code", "fix this"]
-        simple_keywords = ["what is", "who is", "define", "explain", "when is", "where is", "how many", "list", "name"]
-        prompt_lower = prompt.lower()
-        if any(kw in prompt_lower for kw in code_keywords):
-            return "code"
-        elif any(kw in prompt_lower for kw in simple_keywords) and len(prompt.split()) < 15:
-            return "simple"
-        else:
+        # Use classification chain to route
+        try:
+            classification = self.classification_chain.invoke({"question": prompt})
+            classification = classification.strip().lower()
+            if classification in ["simple", "complex", "code"]:
+                return classification
+            else:
+                return "complex"
+        except Exception as e:
+            self.logger.error(f"Classification failed: {e}")
             return "complex"
 
-    def run(self, prompt: str) -> str:
+    def run(self, prompt: str) -> dict:
         self.logger.info(f"Running agent for input: {prompt}")
         try:
             route = self.route(prompt)
             self.logger.info(f"Routing to: {route}")
             if route == "simple":
                 result = self.simple_chain.invoke({"input": prompt})
+                model_used = self.simple_model
             elif route == "code":
                 result = self.code_chain.invoke({"input": prompt})
+                model_used = self.code_model
             else:
                 result = self.complex_chain.invoke({"input": prompt})
+                model_used = self.complex_model
             self.logger.info(f"Final response: {result}")
-            return result
+            return {"response": result, "model": model_used}
         except Exception as e:
             self.logger.error(f"Agent failed: {e}")
-            return f"[Agent error: {e}]"
+            return {"response": f"[Agent error: {e}]", "model": None}

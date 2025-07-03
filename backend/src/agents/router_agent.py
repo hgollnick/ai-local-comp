@@ -42,7 +42,7 @@ class RouterAgent:
         else:
             return "complex"
 
-    def run(self, prompt: str) -> str:
+    def run(self, prompt: str) -> dict:
         cfg = load_config()
         use_langchain = cfg.get("use_langchain_router", False)
         if use_langchain:
@@ -52,8 +52,12 @@ class RouterAgent:
             agent_type = self.decide_agent(prompt)
             logger.info(f"[INTERN ROUTER] Using agent: {agent_type} for prompt: {prompt}")
             if agent_type == "code":
-                return self.code_agent.generate(prompt)
+                response = self.code_agent.generate(prompt)
+                model_used = self.code_model
             elif agent_type == "simple":
-                return self.fast_agent.generate(prompt)
+                response = self.fast_agent.generate(prompt)
+                model_used = self.simple_model
             else:
-                return self.general_agent.generate(prompt)
+                response = self.general_agent.generate(prompt)
+                model_used = self.complex_model
+            return {"response": response, "model": model_used}

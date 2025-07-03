@@ -51,7 +51,7 @@ async def ask(request: AskRequest):
     logger.info(f"Router used: {router}")
     result = router_agent.run(question)
     logger.info(f"Result: {result}")
-    return {"result": result, "router": router}
+    return {"response": result.get("response"), "model": result.get("model"), "router": router}
 
 @app.post("/pull_model/{model_name}")
 def pull_model_endpoint(model_name: str):
