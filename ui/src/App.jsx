@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, CircularProgress } from '@mui/material';
+import { Box, Typography, CircularProgress } from '@mui/material';
 import ModelSelector from './components/ModelSelector';
 import SaveButton from './components/SaveButton';
 import MessageAlert from './components/MessageAlert';
 import PullModel from './components/PullModel';
+import LogViewer from './components/LogViewer';
 
 function App() {
   const [config, setConfig] = useState(null);
@@ -66,17 +67,22 @@ function App() {
   );
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        AI Local Config
-      </Typography>
-      <PullModel models={models} onPulled={refreshModels} />
-      <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
-        <ModelSelector config={config} models={models} handleChange={handleChange} />
-        <SaveButton saving={saving} />
-      </Box>
-      <MessageAlert message={message} />
-    </Container>
+    <div className="main-horizontal-layout">
+      <div className="config-panel">
+        <Typography variant="h5" gutterBottom>
+          AI Local Config
+        </Typography>
+        <PullModel models={models} onPulled={refreshModels} />
+        <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
+          <ModelSelector config={config} models={models} handleChange={handleChange} />
+          <SaveButton saving={saving} />
+        </Box>
+        <MessageAlert message={message} />
+      </div>
+      <div className="logs-panel">
+        <LogViewer />
+      </div>
+    </div>
   );
 }
 

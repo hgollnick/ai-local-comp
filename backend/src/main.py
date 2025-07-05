@@ -5,12 +5,14 @@ print("Debugpy is listening on 0.0.0.0:5678")
 import logging
 from fastapi import FastAPI, Body, Request, HTTPException
 from fastapi.responses import StreamingResponse
+import time
+
 from src.config import Config, load_config, save_config
 from src.models import list_models, pull_model
 from backend.src.agent.basic.router_agent import RouterAgent
 from pydantic import BaseModel
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, filename="backend.log", filemode="a", format="%(asctime)s %(levelname)s %(message)s")
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
@@ -66,3 +68,49 @@ def pull_model_endpoint(model_name: str):
                 logger.debug(f"Streaming chunk of size {len(chunk)} for model {model_name}")
                 yield chunk
     return StreamingResponse(event_stream(), media_type="application/octet-stream")
+
+@app.get("/logs/stream")
+def stream_logs():
+    """
+    Streams the last 100 lines from backend.log, then follows new lines in real time (like tail -n 100 -f), using Server-Sent Events (SSE).
+    """
+    import os
+    from fastapi import Response
+    def tail_lines(filename, n=100):
+        """Read the last n lines from a file efficiently."""
+        try:
+            with open(filename, 'rb') as f:
+                f.seek(0, os.SEEK_END)
+                end = f.tell()
+                lines = []
+                size = 0
+                block = 1024
+                while end > 0 and len(lines) <= n:
+                    delta = min(block, end)
+                    f.seek(end - delta, os.SEEK_SET)
+                    buf = f.read(delta)
+                    lines = buf.split(b'\n') + lines
+                    end -= delta
+                return [l.decode(errors='replace') + '\n' for l in lines[-n:] if l]
+        except Exception as e:
+            return [f"Error reading log file: {e}\n"]
+    def event_stream():
+        logfile = "backend.log"
+        if not os.path.exists(logfile):
+            yield f"data: Log file not found.\n\n"
+            return
+        # Yield last 100 lines first
+        for line in tail_lines(logfile, 100):
+            yield f"data: {line.rstrip()}\n\n"
+        try:
+            with open(logfile, "r") as f:
+                f.seek(0, 2)  # Go to end of file
+                while True:
+                    line = f.readline()
+                    if line:
+                        yield f"data: {line.rstrip()}\n\n"
+                    else:
+                        time.sleep(0.5)
+        except Exception as e:
+            yield f"data: Error reading log file: {e}\n\n"
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

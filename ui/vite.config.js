@@ -5,6 +5,7 @@ export default defineConfig(({ mode }) => {
   // Load env file based on mode
   const env = loadEnv(mode, process.cwd(), '');
   const apiTarget = env.VITE_API_TARGET || 'http://localhost:8000';
+  console.log('apiTarget:', apiTarget);
   return {
     plugins: [react()],
     server: {
@@ -22,6 +23,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
         '/pull_model': {
+          target: apiTarget,
+          changeOrigin: true,
+        },
+        '/logs': {
           target: apiTarget,
           changeOrigin: true,
         },
