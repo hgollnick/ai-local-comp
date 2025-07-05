@@ -1,4 +1,4 @@
-from src.agents.router_agent import RouterAgent
+from backend.src.agent.basic.router_agent import RouterAgent
 
 if __name__ == "__main__":
     router = RouterAgent()

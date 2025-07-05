@@ -1,9 +1,9 @@
 from src.config import load_config
-from src.agents.langchain_router_agent import LangchainRouterAgent
-from src.agents.ollama_agent import OllamaAgent
-from src.agents.default.code_agent import CodeAgent
-from src.agents.default.fast_agent import FastAgent
-from src.agents.default.general_agent import GeneralAgent
+from backend.src.agent.langchain.langchain_router_agent import LangchainRouterAgent
+from backend.src.commons.ollama_service import OllamaService
+from backend.src.commons.agent.code_agent import CodeAgent
+from backend.src.commons.agent.fast_agent import FastAgent
+from backend.src.commons.agent.general_agent import GeneralAgent
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ class RouterAgent:
         self.simple_model = cfg["simple_model"]
         self.complex_model = cfg["complex_model"]
         self.ollama_url = cfg["ollama_url"]
-        self.router = OllamaAgent(self.router_model, self.ollama_url)
+        self.router = OllamaService(self.router_model, self.ollama_url)
         self.code_agent = CodeAgent(self.code_model, self.ollama_url)
         self.fast_agent = FastAgent(self.simple_model, self.ollama_url)
         self.general_agent = GeneralAgent(self.complex_model, self.ollama_url)

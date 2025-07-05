@@ -7,7 +7,7 @@ from fastapi import FastAPI, Body, Request, HTTPException
 from fastapi.responses import StreamingResponse
 from src.config import Config, load_config, save_config
 from src.models import list_models, pull_model
-from src.agents.router_agent import RouterAgent
+from backend.src.agent.basic.router_agent import RouterAgent
 from pydantic import BaseModel
 
 logging.basicConfig(level=logging.INFO)
