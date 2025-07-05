@@ -1,9 +1,9 @@
 from src.config import load_config
 from src.agents.langchain_router_agent import LangchainRouterAgent
 from src.agents.ollama_agent import OllamaAgent
-from src.agents.code_agent import CodeAgent
-from src.agents.fast_agent import FastAgent
-from src.agents.general_agent import GeneralAgent
+from src.agents.default.code_agent import CodeAgent
+from src.agents.default.fast_agent import FastAgent
+from src.agents.default.general_agent import GeneralAgent
 import logging
 
 logger = logging.getLogger(__name__)
