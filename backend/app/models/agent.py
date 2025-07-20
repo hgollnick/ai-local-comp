@@ -19,18 +19,5 @@ class AgentRequest(BaseModel):
     context: Optional[Dict[str, Any]] = None
 
 
-class ModelInfo(BaseModel):
-    """Information about a model."""
-    name: str
-    size: Optional[str] = None
-    modified_at: Optional[str] = None
 
 
-class ConfigModel(BaseModel):
-    """Application configuration model."""
-    router_model: str
-    code_model: str
-    simple_model: str
-    complex_model: str
-    ollama_url: str
-    use_langchain_router: bool
