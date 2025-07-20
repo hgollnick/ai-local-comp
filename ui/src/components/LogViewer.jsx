@@ -5,8 +5,8 @@ function LogViewer() {
   const logRef = useRef();
 
   useEffect(() => {
-    const eventSource = new EventSource('/logs/stream');
-    console.log('[LogViewer] EventSource created for /logs/stream');
+    const eventSource = new EventSource('/api/v1/logs/stream');
+    console.log('[LogViewer] EventSource created for /api/v1/logs/stream');
     eventSource.onopen = () => {
       console.log('[LogViewer] EventSource connection opened');
     };
