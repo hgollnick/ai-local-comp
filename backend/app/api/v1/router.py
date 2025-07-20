@@ -4,7 +4,7 @@ Aggregates all v1 endpoints into a single router.
 """
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import agents, models, config, health
+from app.api.v1.endpoints import agents, models, config, health, logs
 
 # Create the v1 router
 router = APIRouter()
@@ -14,3 +14,4 @@ router.include_router(health.router)
 router.include_router(agents.router) 
 router.include_router(models.router)
 router.include_router(config.router)
+router.include_router(logs.router)
