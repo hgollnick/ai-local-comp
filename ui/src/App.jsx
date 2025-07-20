@@ -13,14 +13,14 @@ function App() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('/config')
+    fetch('/api/v1/config/')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load config');
         return res.json();
       })
       .then(setConfig)
       .catch(err => setMessage('Error loading config'));
-    fetch('/models')
+    fetch('/api/v1/models/')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load models');
         return res.json();
@@ -42,7 +42,7 @@ function App() {
     setSaving(true);
     setMessage('');
     try {
-      const res = await fetch('/config', {
+      const res = await fetch('/api/v1/config/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config),
@@ -55,7 +55,7 @@ function App() {
   };
 
   const refreshModels = () => {
-    fetch('/models')
+    fetch('/api/v1/models/')
       .then(res => res.json())
       .then(data => setModels(data.models || []));
   };
