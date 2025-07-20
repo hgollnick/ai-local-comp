@@ -174,6 +174,11 @@ docker run -p 8000:8000 fastapi-app
 
 ---
 
+
+## 📦 Model Structure Requirement
+
+Each Pydantic model (domain or config) should be placed in its own file within the `app/models/` directory. This improves maintainability, clarity, and code navigation. Do not group unrelated models in a single file.
+
 ## 📌 Additional Guidelines
 
 - Follow **PEP8** and use **Black** for formatting
