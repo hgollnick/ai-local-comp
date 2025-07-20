@@ -1,0 +1,72 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug FastAPI App",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",
+            "console": "integratedTerminal",
+            "env": {
+                "DEBUG": "true",
+                "LOG_LEVEL": "DEBUG",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "jinja": true,
+            "justMyCode": false
+        },
+        {
+            "name": "Debug FastAPI with Uvicorn",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "app.main:app",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "8000",
+                "--log-level",
+                "debug"
+            ],
+            "env": {
+                "DEBUG": "true",
+                "LOG_LEVEL": "DEBUG",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "jinja": true,
+            "justMyCode": false,
+            "subProcess": true
+        },
+        {
+            "name": "Debug Tests",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args": [
+                "tests/",
+                "-v",
+                "--tb=short"
+            ],
+            "env": {
+                "DEBUG": "true",
+                "LOG_LEVEL": "DEBUG",
+                "PYTHONPATH": "${workspaceFolder}"
+            },
+            "console": "integratedTerminal",
+            "jinja": true,
+            "justMyCode": false
+        },
+        {
+            "name": "Remote Debug (debugpy)",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 5678
+            },
+            "justMyCode": false
+        }
+    ]
+}

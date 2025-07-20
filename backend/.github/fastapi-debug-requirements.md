@@ -58,7 +58,6 @@ Create `.vscode/launch.json`:
             "module": "uvicorn",
             "args": [
                 "app.main:app",
-                "--reload",
                 "--host", "0.0.0.0",
                 "--port", "8000",
                 "--log-level", "debug"
@@ -70,7 +69,8 @@ Create `.vscode/launch.json`:
             },
             "console": "integratedTerminal",
             "jinja": true,
-            "justMyCode": false
+            "justMyCode": false,
+            "subProcess": true
         },
         {
             "name": "Debug Tests",

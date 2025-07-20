@@ -1,10 +1,9 @@
-# AI Local Companion - Copilot Instructions
+# AI Local Companion - Backend Copilot Instructions
 
 ## Architecture Overview
 
-This is a multi-service AI router system with three main components:
+This is the backend component of a multi-service AI router system:
 - **Backend**: FastAPI server with intelligent LLM routing (`backend/src/`)
-- **UI**: Vite-based configuration interface (`ui/src/`) - planned migration from React to Angular or Svelte
 - **Ollama**: Local LLM service orchestrated via Docker Compose
 
 The core concept is **context-aware LLM routing** - different models handle different query types (code, simple, complex) based on configurable rules in `agent_config.json`.
@@ -26,7 +25,7 @@ The core concept is **context-aware LLM routing** - different models handle diff
 ### Service Communication
 - All LLM calls go through `OllamaService` (`backend/src/commons/ollama_service.py`)
 - Docker services communicate via container names: `http://ollama:11434`, `http://backend:8000`
-- Environment variables: `OLLAMA_URL` for backend, `VITE_API_TARGET` for UI proxy
+- Environment variables: `OLLAMA_URL` for backend
 
 ## Development Workflows
 
