@@ -84,7 +84,7 @@ def debug_test_endpoints():
     # Test ask endpoint
     print("\n4. Testing ask endpoint:")
     try:
-        response = client.post("/api/v1/agents/ask", json={
+        response = client.post("/api/v1/ollama/ask", json={
             "prompt": "What is 2+2?",
             "context": {"type": "math"}
         })

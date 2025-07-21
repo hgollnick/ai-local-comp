@@ -3,7 +3,7 @@ Configuration model for the application.
 """
 from pydantic import BaseModel
 
-class ConfigModel(BaseModel):
+class SelectorConfig(BaseModel):
     """Application configuration model."""
     router_model: str
     code_model: str

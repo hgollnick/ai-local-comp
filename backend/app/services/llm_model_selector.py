@@ -1,34 +1,34 @@
 """
-Agent services for handling different types of requests.
+LLMModel services for handling different types of requests.
 """
 import time
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from enum import Enum
 
-from app.services.base import AgentService
-from app.services.ollama_sync import OllamaService
+from app.services.base import ModelSelector
+from app.services.ollama.ollama_sync import OllamaService
 from app.core.config import settings
-from app.models.agent import AgentResponse
+from app.services import config as config_service
 
 
-class AgentType(str, Enum):
-    """Types of agents available."""
+class LLMModelType(str, Enum):
+    """Types of llms available."""
     CODE = "code"
     SIMPLE = "simple"
     COMPLEX = "complex"
 
 
-class RouterService(AgentService):
-    """Service for routing requests to appropriate agents."""
+class LLMModelSelectorService(ModelSelector):
+    """Service for routing requests to appropriate LLM Model."""
     
     def __init__(self):
         super().__init__()
-        self.router_service = OllamaService(settings.router_model)
+        self.router_service = OllamaService(config_service.load_config().get("router_model"))
     
-    async def classify_request(self, prompt: str) -> AgentType:
-        """Classify the request to determine which agent to use."""
+    async def classify_request(self, prompt: str) -> LLMModelType:
+        """Classify the request to determine which model to use."""
         routing_prompt = (
-            'Choose which agent should respond to the following query.\n\n'
+            'Choose which model should respond to the following query.\n\n'
             f'Query:\n"""{prompt}"""\n\n'
             'Respond with exactly one word:\n'
             '- "code" → if it\'s a programming-related question.\n'
@@ -44,33 +44,33 @@ class RouterService(AgentService):
             self.logger.info(f"Routing decision: '{answer}' for prompt: {prompt[:50]}...")
             
             if "code" in answer:
-                return AgentType.CODE
+                return LLMModelType.CODE
             elif "simple" in answer:
-                return AgentType.SIMPLE
+                return LLMModelType.SIMPLE
             else:
-                return AgentType.COMPLEX
+                return LLMModelType.COMPLEX
                 
         except Exception as e:
             self.logger.error(f"Error in routing: {e}")
-            return AgentType.COMPLEX  # Default fallback
+            return LLMModelType.COMPLEX  # Default fallback
     
     async def process(self, prompt: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
-        """Process request by routing to appropriate agent."""
+        """Process request by routing to appropriate model."""
         start_time = time.time()
         
         try:
             # Classify the request
-            agent_type = await self.classify_request(prompt)
+            llm_model_type = await self.classify_request(prompt)
             
-            # Get the appropriate agent
-            agent_service = self._get_agent_service(agent_type)
+            # Get the appropriate model
+            model_service = self._get_model_service(llm_model_type)
             
             # Process the request
-            response = await agent_service.process(prompt, context)
+            response = await model_service.process(prompt, context)
             
             processing_time = time.time() - start_time
             response["processing_time"] = processing_time
-            response["agent_type"] = agent_type.value
+            response["llm_model_type"] = llm_model_type.value
             
             return response
             
@@ -80,21 +80,21 @@ class RouterService(AgentService):
             return {
                 "response": f"Error processing request: {str(e)}",
                 "model": "error",
-                "agent_type": "error",
+                "llm_model_type": "error",
                 "processing_time": processing_time
             }
     
-    def _get_agent_service(self, agent_type: AgentType) -> AgentService:
-        """Get the appropriate agent service based on type."""
-        if agent_type == AgentType.CODE:
-            return CodeAgentService()
-        elif agent_type == AgentType.SIMPLE:
-            return SimpleAgentService()
+    def _get_model_service(self, llm_model_type: LLMModelType) -> ModelSelector:
+        """Get the appropriate model service based on type."""
+        if llm_model_type == LLMModelType.CODE:
+            return CodeModelService()
+        elif llm_model_type == LLMModelType.SIMPLE:
+            return SimpleModelService()
         else:
-            return ComplexAgentService()
+            return ComplexModelService()
 
 
-class CodeAgentService(AgentService):
+class CodeModelService(ModelSelector):
     """Service for handling code-related requests."""
     
     def __init__(self):
@@ -110,14 +110,14 @@ class CodeAgentService(AgentService):
             return {
                 "response": response,
                 "model": settings.code_model,
-                "agent_type": AgentType.CODE.value
+                "llm_model_type": LLMModelType.CODE.value
             }
         except Exception as e:
-            self.logger.error(f"Error in code agent: {e}")
+            self.logger.error(f"Error in code model: {e}")
             raise
 
 
-class SimpleAgentService(AgentService):
+class SimpleModelService(ModelSelector):
     """Service for handling simple requests."""
     
     def __init__(self):
@@ -133,14 +133,14 @@ class SimpleAgentService(AgentService):
             return {
                 "response": response,
                 "model": settings.simple_model,
-                "agent_type": AgentType.SIMPLE.value
+                "llm_model_type": LLMModelType.SIMPLE.value
             }
         except Exception as e:
-            self.logger.error(f"Error in simple agent: {e}")
+            self.logger.error(f"Error in simple model: {e}")
             raise
 
 
-class ComplexAgentService(AgentService):
+class ComplexModelService(ModelSelector):
     """Service for handling complex requests."""
     
     def __init__(self):
@@ -156,8 +156,8 @@ class ComplexAgentService(AgentService):
             return {
                 "response": response,
                 "model": settings.complex_model,
-                "agent_type": AgentType.COMPLEX.value
+                "llm_model_type": LLMModelType.COMPLEX.value
             }
         except Exception as e:
-            self.logger.error(f"Error in complex agent: {e}")
+            self.logger.error(f"Error in complex model: {e}")
             raise

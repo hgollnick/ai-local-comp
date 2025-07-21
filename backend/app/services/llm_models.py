@@ -1,16 +1,15 @@
 """
-Service for managing Ollama models.
+Service for managing AI models.
 """
 from typing import List, Dict, Any
 import requests
-import json
 
 from app.services.base import BaseService
 from app.core.config import settings
 
 
-class ModelService(BaseService):
-    """Service for managing Ollama models."""
+class LLMModelService(BaseService):
+    """Service for managing AI models."""
     
     def __init__(self):
         super().__init__()
@@ -18,7 +17,7 @@ class ModelService(BaseService):
         self.timeout = 300  # 5 minutes for model pulling
     
     async def list_models(self) -> List[str]:
-        """Get list of available models from Ollama."""
+        """Get list of available models from AI."""
         self.logger.info(f"Fetching models from {self.base_url}/api/tags")
         
         try:
@@ -37,7 +36,7 @@ class ModelService(BaseService):
             return []
     
     async def pull_model(self, model_name: str) -> Dict[str, Any]:
-        """Pull a model from Ollama registry."""
+        """Pull a model from AI registry."""
         self.logger.info(f"Pulling model '{model_name}' from {self.base_url}/api/pull")
         
         try:

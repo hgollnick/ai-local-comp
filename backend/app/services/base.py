@@ -31,9 +31,9 @@ class LLMService(BaseService):
         pass
 
 
-class AgentService(BaseService):
-    """Base class for agent services."""
-    
+class ModelSelector(BaseService):
+    """Base class for model selector services."""
+
     @abstractmethod
     async def process(self, prompt: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """Process a request and return response."""

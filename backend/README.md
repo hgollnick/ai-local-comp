@@ -148,9 +148,9 @@ Handles communication with Ollama API, including model management and text gener
 Manages Ollama models - listing, pulling, and validation.
 
 ### Agent Services
-- **CodeAgentService**: Handles programming-related queries
-- **SimpleAgentService**: Handles quick factual questions
-- **ComplexAgentService**: Handles nuanced, multi-part questions
+- **CodeAgentService** (inherits ModelSelector): Handles programming-related queries
+- **SimpleAgentService** (inherits ModelSelector): Handles quick factual questions
+- **ComplexAgentService** (inherits ModelSelector): Handles nuanced, multi-part questions
 
 ## Error Handling
 

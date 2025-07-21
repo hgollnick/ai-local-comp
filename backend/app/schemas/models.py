@@ -5,7 +5,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
-class ModelsResponse(BaseModel):
+class ListModelsResponse(BaseModel):
     """Response schema for listing available models."""
     models: List[str] = Field(
         ..., 
@@ -21,16 +21,19 @@ class ModelsResponse(BaseModel):
         if self.count is None:
             self.count = len(self.models)
 
-    class Config:
-        json_schema_extra = {
+    model_config = {
+        'protected_namespaces': (),
+        'json_schema_extra': {
             "example": {
                 "models": ["llama3:instruct", "codellama:instruct", "mistral:instruct"],
                 "count": 3
             }
         }
+    }
 
 
 class PullModelRequest(BaseModel):
+    model_config = {'protected_namespaces': ()}
     """Request schema for pulling a model."""
     model_name: str = Field(
         ...,
@@ -58,11 +61,13 @@ class PullModelResponse(BaseModel):
         description="Name of the model that was pulled"
     )
 
-    class Config:
-        json_schema_extra = {
+    model_config = {
+        'protected_namespaces': (),
+        'json_schema_extra': {
             "example": {
                 "status": "success",
                 "message": "Model llama3:instruct pulled successfully",
                 "model_name": "llama3:instruct"
             }
         }
+    }

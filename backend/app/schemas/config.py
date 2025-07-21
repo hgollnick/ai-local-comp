@@ -65,7 +65,7 @@ class ConfigUpdateRequest(BaseModel):
     )
     ollama_url: Optional[str] = Field(
         None,
-        description="URL of the Ollama service"
+        description="URL of the AI service"
     )
     use_langchain_router: Optional[bool] = Field(
         None,

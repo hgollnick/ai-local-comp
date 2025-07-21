@@ -20,7 +20,7 @@ function App() {
       })
       .then(setConfig)
       .catch(err => setMessage('Error loading config'));
-    fetch('/api/v1/models/')
+    fetch('/api/v1/ollama/models/')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load models');
         return res.json();
@@ -55,7 +55,7 @@ function App() {
   };
 
   const refreshModels = () => {
-    fetch('/api/v1/models/')
+    fetch('/api/v1/ollama/models/')
       .then(res => res.json())
       .then(data => setModels(data.models || []));
   };

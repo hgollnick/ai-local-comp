@@ -6,8 +6,8 @@ import logging
 from functools import lru_cache
 from typing import AsyncGenerator
 
-from app.services.agents import RouterService
-from app.services.models import ModelService
+from app.services.llm_model_selector import LLMModelSelectorService
+from app.services.llm_models import LLMModelService
 from app.core.config import Settings, settings
 
 logger = logging.getLogger("app.dependencies")
@@ -24,14 +24,14 @@ def get_settings() -> Settings:
     return settings
 
 
-async def get_router_service() -> AsyncGenerator[RouterService, None]:
+async def get_router_service() -> AsyncGenerator[LLMModelSelectorService, None]:
     """
     Get router service instance with proper cleanup.
     
     This dependency provides a RouterService instance and ensures
     proper resource cleanup after the request is completed.
     """
-    service = RouterService()
+    service = LLMModelSelectorService()
     try:
         yield service
     finally:
@@ -40,14 +40,14 @@ async def get_router_service() -> AsyncGenerator[RouterService, None]:
             await service.close()
 
 
-async def get_model_service() -> AsyncGenerator[ModelService, None]:
+async def get_model_service() -> AsyncGenerator[LLMModelService, None]:
     """
     Get model service instance with proper cleanup.
     
     This dependency provides a ModelService instance and ensures
     proper resource cleanup after the request is completed.
     """
-    service = ModelService()
+    service = LLMModelService()
     try:
         yield service
     finally:
