@@ -13,7 +13,7 @@ function LogViewer() {
     eventSource.onmessage = (e) => {
       console.log('[LogViewer] Received log data:', e.data);
       if (logRef.current) {
-        logRef.current.textContent += e.data;
+        logRef.current.textContent += e.data + '\n';
         logRef.current.scrollTop = logRef.current.scrollHeight;
       }
     };
