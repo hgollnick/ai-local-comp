@@ -5,6 +5,7 @@ import SaveButton from './components/SaveButton';
 import MessageAlert from './components/MessageAlert';
 import PullModel from './components/PullModel';
 import LogViewer from './components/LogViewer';
+import './index.css';
 
 function App() {
   const [config, setConfig] = useState(null);
@@ -68,7 +69,7 @@ function App() {
 
   return (
     <div className="main-horizontal-layout">
-      <div className="config-panel">
+      <div className="left-panel">
         <Typography variant="h5" gutterBottom>
           AI Local Config
         </Typography>
@@ -79,7 +80,7 @@ function App() {
         </Box>
         <MessageAlert message={message} />
       </div>
-      <div className="logs-panel">
+      <div className="right-panel">
         <LogViewer />
       </div>
     </div>

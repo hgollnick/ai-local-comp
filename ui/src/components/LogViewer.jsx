@@ -27,10 +27,21 @@ function LogViewer() {
   }, []);
 
   return (
-    <Box mt={4}>
+    <Box sx={{ width: '100%', height: '100%' }}>
       <Typography variant="h6">Backend Logs</Typography>
-      <Paper variant="outlined" sx={{ height: 200, overflow: 'auto', p: 1, background: '#111', color: '#0f0', fontFamily: 'monospace', fontSize: 13 }}>
-        <pre ref={logRef} style={{ margin: 0 }}></pre>
+      <Paper
+        variant="outlined"
+        sx={{
+          height: '100%',
+          overflow: 'auto',
+          p: 1,
+          background: '#111',
+          color: '#0f0',
+          fontFamily: 'monospace',
+          fontSize: 13,
+        }}
+      >
+        <pre ref={logRef} style={{ margin: 0, height: '100%' }}></pre>
       </Paper>
     </Box>
   );
