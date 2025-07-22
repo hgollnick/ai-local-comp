@@ -59,3 +59,4 @@ venv/
 *.log
 backend/agent_config.json
 backend/config.json
+ui/.vscode/settings.json
