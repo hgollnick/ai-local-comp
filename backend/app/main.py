@@ -51,7 +51,8 @@ app = FastAPI(
     title=settings.app_name,
     description="AI Local Comp Backend API",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
+    redirect_slashes=False  # Disable automatic slash redirection
 )
 
 # Add CORS middleware
