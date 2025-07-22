@@ -6,10 +6,11 @@ services:
       context: ./backend
     environment:
       - OLLAMA_URL=http://ollama:11434
+      - PYTHONPATH=/app/backend
     volumes:
       - ./backend:/app/backend
     working_dir: /app/backend
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - ollama
     ports:
