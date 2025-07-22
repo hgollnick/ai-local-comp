@@ -63,7 +63,7 @@ python -m unittest discover -s tests
 You can send a prompt to the backend using curl:
 
 ```bash
-curl -X POST http://localhost:8000/ask \
+curl -X POST http://localhost:8000/api/v1/ollama/ask \
   -H "Content-Type: application/json" \
   -d '{"prompt": "What is the capital of France?"}'
 ```
