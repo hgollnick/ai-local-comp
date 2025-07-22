@@ -6,32 +6,28 @@ import logging
 from functools import lru_cache
 from typing import AsyncGenerator
 
-from app.services.llm_model_selector import LLMModelSelectorService
+from app.services.selector.basic_model_selector import BasicModelSelectorService
+from app.services.selector.langchain_model_selector import LangchainModelSelector
 from app.services.llm_models import LLMModelService
 from app.core.config import Settings, settings
+from app.services.base import ModelSelector
 
 logger = logging.getLogger("app.dependencies")
 
 
-@lru_cache()
-def get_settings() -> Settings:
-    """
-    Get cached settings instance.
-    
-    Using lru_cache ensures we create only one instance of settings
-    throughout the application lifecycle.
-    """
-    return settings
-
-
-async def get_router_service() -> AsyncGenerator[LLMModelSelectorService, None]:
+async def get_router_service() -> AsyncGenerator[ModelSelector, None]:
     """
     Get router service instance with proper cleanup.
     
     This dependency provides a RouterService instance and ensures
     proper resource cleanup after the request is completed.
     """
-    service = LLMModelSelectorService()
+    import app.services.config as config_service
+    cfg = config_service.load_config()
+    if cfg.get("use_langchain_router"):
+        service = LangchainModelSelector()
+    else:
+        service = BasicModelSelectorService()
     try:
         yield service
     finally:

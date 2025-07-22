@@ -35,6 +35,11 @@ class ModelSelector(BaseService):
     """Base class for model selector services."""
 
     @abstractmethod
+    def classify_request(self, prompt: str):
+        """Classify the request based on the prompt."""
+        pass
+
+    @abstractmethod
     async def process(self, prompt: str, context: Dict[str, Any] = None) -> Dict[str, Any]:
         """Process a request and return response."""
         pass

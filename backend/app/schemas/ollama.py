@@ -38,9 +38,9 @@ class AskResponse(BaseModel):
         ..., 
         description="The model used to generate the response"
     )
-    router: str = Field(
+    model_selector: str = Field(
         ..., 
-        description="The router type used (langchain/intern)"
+        description="The model selector used (langchain/basic)"
     )
     llm_model_type: str = Field(
         ..., 

@@ -11,7 +11,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Depends
 
 from app.schemas.ollama import AskRequest, AskResponse
-from app.services.llm_model_selector import LLMModelSelectorService
+from app.services.selector.basic_model_selector import BasicModelSelectorService
 from app.dependencies import get_router_service
 
 logger = logging.getLogger("app.api.ollama")
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/ollama", tags=["ollama"])
 @router.post("/ask", response_model=AskResponse)
 async def ask_question(
     request: AskRequest,
-    router_service: LLMModelSelectorService = Depends(get_router_service)
+    model_selector_service: BasicModelSelectorService = Depends(get_router_service)
 ) -> AskResponse:
     """
     Ask a question to the Ollama.
@@ -34,14 +34,14 @@ async def ask_question(
     logger.info(f"Processing question: {request.prompt[:100]}...")
     
     try:
-        result = await router_service.process(request.prompt, request.context)
+        result = await model_selector_service.process(request.prompt, request.context)
         
         response = AskResponse(
             response=result["response"],
             model=result["model"],
-            router="intern",  # For now, using internal router
+            model_selector=type(model_selector_service).__name__,
             llm_model_type=result["llm_model_type"],
-            processing_time=result.get("processing_time")
+            processing_time=result.get("processing_time"),
         )
         
         logger.info(f"Response generated successfully in {response.processing_time:.2f}s")
