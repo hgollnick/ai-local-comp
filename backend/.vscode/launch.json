@@ -57,16 +57,6 @@
             "console": "integratedTerminal",
             "jinja": true,
             "justMyCode": false
-        },
-        {
-            "name": "Remote Debug (debugpy)",
-            "type": "debugpy",
-            "request": "attach",
-            "connect": {
-                "host": "localhost",
-                "port": 5678
-            },
-            "justMyCode": false
         }
     ]
 }
