@@ -52,7 +52,7 @@ app = FastAPI(
     description="AI Local Comp Backend API",
     version="1.0.0",
     lifespan=lifespan,
-    redirect_slashes=False  # Disable automatic slash redirection
+    redirect_slashes=False  # Disable redirects since we handle both cases explicitly
 )
 
 # Add CORS middleware
@@ -66,6 +66,15 @@ app.add_middleware(
 
 # Include routers
 app.include_router(v1_router, prefix="/api/v1")
+
+# Add API root redirect for convenience
+@app.get("/api", response_model=StatusResponse)
+async def api_root() -> StatusResponse:
+    """API root endpoint with version information."""
+    return StatusResponse(
+        status="available",
+        message="API v1 available at /api/v1/ - Health check at /api/v1/health/"
+    )
 
 # Legacy API support (if needed)
 # app.include_router(v1_router, prefix="/api")  # Uncomment for backward compatibility

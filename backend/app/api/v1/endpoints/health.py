@@ -10,6 +10,7 @@ router = APIRouter(prefix="/health", tags=["health"])
 
 
 @router.get("/", response_model=StatusResponse)
+@router.get("", response_model=StatusResponse)  # Handle both with and without trailing slash
 async def health_check() -> StatusResponse:
     """
     Basic health check endpoint.

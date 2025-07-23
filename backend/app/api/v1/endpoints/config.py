@@ -15,6 +15,7 @@ router = APIRouter(prefix="/config", tags=["configuration"])
 
 
 @router.get("/", response_model=ConfigResponse)
+@router.get("", response_model=ConfigResponse)  # Handle both with and without trailing slash
 async def get_config() -> ConfigResponse:
     """
     Get current application configuration from config.json.
@@ -26,6 +27,7 @@ async def get_config() -> ConfigResponse:
 
 # POST endpoint to save configuration
 @router.post("/", response_model=dict)
+@router.post("", response_model=dict)  # Handle both with and without trailing slash
 async def set_config(cfg: SelectorConfig):
     """
     Save application configuration to a file.
