@@ -11,8 +11,9 @@ class LangchainModelSelector(ModelSelector):
     def __init__(self):
         self.logger = logging.getLogger(__name__)
         logging.basicConfig(level=logging.INFO)
+        import os
         cfg = config_service.load_config()
-        self.ollama_url = cfg["ollama_url"]
+        self.ollama_url = os.environ.get("OLLAMA_URL", cfg["ollama_url"])
         self.router_model = cfg["router_model"]
         self.complex_model = cfg.get("complex_model", self.router_model)
         self.simple_model = cfg.get("simple_model", self.router_model)
