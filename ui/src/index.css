@@ -1,36 +1,26 @@
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #f5f5f5;
-  font-family: Roboto, sans-serif;
-}
-
 .main-horizontal-layout {
   display: flex;
   flex-direction: row;
-  height: 100vh;
-  width: 100vw;
-}
-
-.config-panel {
-  flex: 0 0 350px;
-  background: #fff;
-  padding: 32px 24px;
-  box-shadow: 2px 0 8px rgba(0,0,0,0.04);
-  overflow-y: auto;
-}
-
-.logs-panel {
-  flex: 1 1 0;
-  background: #181818;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
   height: 100vh;
   overflow: hidden;
+  gap: 10px; /* Adds padding between the two divs */
 }
 
-.logs-panel > * {
-  flex: 1 1 0;
-  min-height: 0;
+.left-panel {
+  flex: 0 0 55%;
+  margin: 0;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.right-panel {
+  flex: 0 0 45%;
+  margin: 0;
+  height: 95%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: auto; /* Ensures content fits within the div */
 }

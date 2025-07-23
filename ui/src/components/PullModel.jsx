@@ -15,7 +15,7 @@ function PullModel({ models, onPulled }) {
     setMessage('');
     setError('');
     try {
-      const res = await fetch(`/pull_model/${encodeURIComponent(modelName)}`, { method: 'POST' });
+      const res = await fetch(`/api/v1/ollama/models/pull/${encodeURIComponent(modelName)}`, { method: 'POST' });
       if (!res.ok) {
         let errorText = await res.text();
         try {

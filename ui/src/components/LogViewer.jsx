@@ -5,15 +5,15 @@ function LogViewer() {
   const logRef = useRef();
 
   useEffect(() => {
-    const eventSource = new EventSource('/logs/stream');
-    console.log('[LogViewer] EventSource created for /logs/stream');
+    const eventSource = new EventSource('/api/v1/logs/stream');
+    console.log('[LogViewer] EventSource created for /api/v1/logs/stream');
     eventSource.onopen = () => {
       console.log('[LogViewer] EventSource connection opened');
     };
     eventSource.onmessage = (e) => {
       console.log('[LogViewer] Received log data:', e.data);
       if (logRef.current) {
-        logRef.current.textContent += e.data;
+        logRef.current.textContent += e.data + '\n';
         logRef.current.scrollTop = logRef.current.scrollHeight;
       }
     };
@@ -27,10 +27,21 @@ function LogViewer() {
   }, []);
 
   return (
-    <Box mt={4}>
+    <Box sx={{ width: '100%', height: '100%' }}>
       <Typography variant="h6">Backend Logs</Typography>
-      <Paper variant="outlined" sx={{ height: 200, overflow: 'auto', p: 1, background: '#111', color: '#0f0', fontFamily: 'monospace', fontSize: 13 }}>
-        <pre ref={logRef} style={{ margin: 0 }}></pre>
+      <Paper
+        variant="outlined"
+        sx={{
+          height: '100%',
+          overflow: 'auto',
+          p: 1,
+          background: '#111',
+          color: '#0f0',
+          fontFamily: 'monospace',
+          fontSize: 13,
+        }}
+      >
+        <pre ref={logRef} style={{ margin: 0, height: '100%' }}></pre>
       </Paper>
     </Box>
   );

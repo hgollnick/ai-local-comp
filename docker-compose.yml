@@ -6,10 +6,12 @@ services:
       context: ./backend
     environment:
       - OLLAMA_URL=http://ollama:11434
+      - PYTHONPATH=/app/backend
+      - DEBUG=True
     volumes:
       - ./backend:/app/backend
     working_dir: /app/backend
-    command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    command: python -m debugpy --listen 0.0.0.0:5678 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     depends_on:
       - ollama
     ports:

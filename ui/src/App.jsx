@@ -5,6 +5,7 @@ import SaveButton from './components/SaveButton';
 import MessageAlert from './components/MessageAlert';
 import PullModel from './components/PullModel';
 import LogViewer from './components/LogViewer';
+import './index.css';
 
 function App() {
   const [config, setConfig] = useState(null);
@@ -13,14 +14,14 @@ function App() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    fetch('/config')
+    fetch('/api/v1/config/')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load config');
         return res.json();
       })
       .then(setConfig)
       .catch(err => setMessage('Error loading config'));
-    fetch('/models')
+    fetch('/api/v1/ollama/models/')
       .then(res => {
         if (!res.ok) throw new Error('Failed to load models');
         return res.json();
@@ -42,7 +43,7 @@ function App() {
     setSaving(true);
     setMessage('');
     try {
-      const res = await fetch('/config', {
+      const res = await fetch('/api/v1/config/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config),
@@ -55,7 +56,7 @@ function App() {
   };
 
   const refreshModels = () => {
-    fetch('/models')
+    fetch('/api/v1/ollama/models/')
       .then(res => res.json())
       .then(data => setModels(data.models || []));
   };
@@ -68,7 +69,7 @@ function App() {
 
   return (
     <div className="main-horizontal-layout">
-      <div className="config-panel">
+      <div className="left-panel">
         <Typography variant="h5" gutterBottom>
           AI Local Config
         </Typography>
@@ -79,7 +80,7 @@ function App() {
         </Box>
         <MessageAlert message={message} />
       </div>
-      <div className="logs-panel">
+      <div className="right-panel">
         <LogViewer />
       </div>
     </div>
